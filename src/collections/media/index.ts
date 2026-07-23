@@ -1,4 +1,4 @@
-import { fingerprint, fingerprintPerceptual } from '@/lib/fingerprint'
+import { fingerprint } from '@/lib/fingerprint'
 import { APIError, type CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
@@ -38,7 +38,6 @@ export const Media: CollectionConfig = {
     beforeChange: [
       // Remove any client-provided URL. Payload manages this field automatically.
       ({ data }) => {
-        console.log('beforeChange', data)
         delete data?.['url']
         return data
       },
@@ -53,16 +52,10 @@ export const Media: CollectionConfig = {
         const payload = req.payload
         const uploadedFileBytes = req.file.data
         const uploadedFileMimeType = req.file.mimetype
-        const isImage = uploadedFileMimeType?.startsWith('image/')
         let fileHash: string
         try {
-          if (isImage) {
-            // Images: hash the DECODED PIXELS, so format/compression doesn't matter
-            fileHash = await fingerprintPerceptual(uploadedFileBytes, uploadedFileMimeType)
-          } else {
-            // Everything else: hash the RAW BYTES exactly as uploaded
-            fileHash = fingerprint(uploadedFileBytes)
-          }
+          // Everything else: hash the RAW BYTES exactly as uploaded
+          fileHash = fingerprint(uploadedFileBytes)
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error'
           payload.logger.error(`[Media Hooks] Could not hash file: ${errorMessage}`)
