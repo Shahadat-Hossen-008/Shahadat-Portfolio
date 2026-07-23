@@ -51,7 +51,6 @@ export const Media: CollectionConfig = {
         }
         const payload = req.payload
         const uploadedFileBytes = req.file.data
-        const uploadedFileMimeType = req.file.mimetype
         let fileHash: string
         try {
           // Everything else: hash the RAW BYTES exactly as uploaded
