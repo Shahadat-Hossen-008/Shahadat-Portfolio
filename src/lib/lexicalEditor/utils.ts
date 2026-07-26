@@ -3,5 +3,7 @@ interface FeatureWithKey {
 }
 
 export function hasKey(value: unknown): value is FeatureWithKey {
-  return typeof value === 'object' && value !== null && 'key' in value
+  return (
+    typeof value === 'object' && value !== null && 'key' in value && typeof value.key === 'string'
+  )
 }

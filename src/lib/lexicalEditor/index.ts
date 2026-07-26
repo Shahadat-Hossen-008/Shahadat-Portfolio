@@ -35,7 +35,7 @@ export function customLexicalEditor(options: CustomLexicalOptions = {}) {
 
       // Replace the default heading feature with a restricted one that
       // only allows the specified tag sizes (e.g. ['h2', 'h3']).
-      if (options.headingsConfig?.enabled && options.headingsConfig?.allowedSizes) {
+      if (options.headingsConfig?.enabled !== false && options.headingsConfig?.allowedSizes) {
         features = features.filter((f) => {
           if (!hasKey(f)) {
             return true
