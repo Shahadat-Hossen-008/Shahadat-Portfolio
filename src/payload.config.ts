@@ -9,6 +9,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/media'
 import { Pages } from './collections/Pages'
 import { Tags } from './collections/Tags'
+import { customLexicalEditor } from './lib/lexicalEditor'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -21,7 +22,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Pages, Tags],
-  editor: lexicalEditor(),
+  editor: customLexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
