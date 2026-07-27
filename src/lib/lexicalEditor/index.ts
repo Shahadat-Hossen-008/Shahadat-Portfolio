@@ -1,6 +1,7 @@
-import { HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
+import { BlocksFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { CustomLexicalOptions } from './types'
 import { hasKey } from './utils'
+import { CodeBlocks } from './features/codeBlocks'
 
 /**
  * Builds a Lexical editor instance starting from Payload's defaults,
@@ -48,6 +49,15 @@ export function customLexicalEditor(options: CustomLexicalOptions = {}) {
           }),
         )
       }
+
+      const richTextBlocks = []
+
+      // Add the code block feature if explicitly enabled.
+      if (options.codeBlock) {
+        richTextBlocks.push(CodeBlocks)
+      }
+
+      features.push(BlocksFeature({ blocks: richTextBlocks }))
 
       return features
     },
