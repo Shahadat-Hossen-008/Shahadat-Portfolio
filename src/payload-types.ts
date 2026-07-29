@@ -176,6 +176,7 @@ export interface Page {
    * The name of the page
    */
   title: string;
+  localSeoTab?: LocalSeoTab;
   /**
    * The slug is used in the URL for this page. It's recommended to keep it short and descriptive.
    */
@@ -186,6 +187,32 @@ export interface Page {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LocalSeoTab".
+ */
+export interface LocalSeoTab {
+  /**
+   * SEO title for this page. If not provided, it will fall back to a suitable document property (e.g., the page title)
+   */
+  title?: string | null;
+  /**
+   * SEO description for this page.
+   */
+  description?: string | null;
+  /**
+   * Open Graph image for this page's URL.
+   */
+  image?: (string | null) | Media;
+  /**
+   * If not provided it will be a self-referencing URL.
+   */
+  canonicalUrl?: string | null;
+  /**
+   * Redirect URL for this page. Please start with https://
+   */
+  redirect?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -326,10 +353,22 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  localSeoTab?: T | LocalSeoTabSelect<T>;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LocalSeoTab_select".
+ */
+export interface LocalSeoTabSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  canonicalUrl?: T;
+  redirect?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
