@@ -53,7 +53,7 @@ type SlugFieldOverrides = {
  *
  * @see https://payloadcms.com/docs/fields/overview
  */
-
+//!TODO: make slug not hidden even after its been locked
 export const createSlugField = ({
   fieldToUse = 'title',
   overrides = {},
