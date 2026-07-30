@@ -1,16 +1,23 @@
 'use client'
+import { formatSlug } from '@/fields/slug/formatSlug'
 import { FieldLabel, useField } from '@payloadcms/ui'
 import { FieldLabelClientProps, TextFieldClient } from 'payload'
 import { CSSProperties } from 'react'
 
 interface AutoGenerateLabelProps {
   sourcePath?: string
+  contentType?: 'text' | 'slug'
 }
 
 type props = AutoGenerateLabelProps & FieldLabelClientProps<TextFieldClient>
 
+/**
+ * Label component that adds an "Auto Generate" button next to a field's
+ * label, copying (and optionally slug-formatting) a value from another
+ * field (`sourcePath`) on the same form into this field, live and client-side.
+ */
 export function AutoGenerateLabel(props: props) {
-  const { field, path, sourcePath = 'title' } = props
+  const { field, path, sourcePath = 'title', contentType = 'text' } = props
   const {
     setValue: setTargetValue,
     readOnly: isTargetReadOnly,
@@ -22,9 +29,13 @@ export function AutoGenerateLabel(props: props) {
     if (!sourceValue) {
       return
     }
-    setTargetValue(sourceValue)
+
+    const newValue = contentType === 'slug' ? formatSlug(sourceValue) : sourceValue
+
+    setTargetValue(newValue)
   }
   const isDisabled = isTargetReadOnly || formProcessing || formInitializing
+
   const wrapperStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'row',
@@ -37,7 +48,7 @@ export function AutoGenerateLabel(props: props) {
     borderStyle: 'none',
     backgroundColor: 'transparent',
     padding: '0',
-    color: 'currentcolor',
+    color: '#007cba',
     textDecorationLine: 'underline',
     display: sourceValue ? 'inline' : 'none',
   }

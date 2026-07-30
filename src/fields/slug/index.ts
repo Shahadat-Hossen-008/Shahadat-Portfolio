@@ -53,7 +53,6 @@ type SlugFieldOverrides = {
  *
  * @see https://payloadcms.com/docs/fields/overview
  */
-//!TODO: make slug not hidden even after its been locked
 export const createSlugField = ({
   fieldToUse = 'title',
   overrides = {},
@@ -73,6 +72,16 @@ export const createSlugField = ({
         "The slug is used in the URL for this page. It's recommended to keep it short and descriptive.",
       condition: (_, siblingData) => !siblingData?.slugLock,
       ...adminOverrides,
+      components: {
+        Label: {
+          path: '@/components/admin/auto-generate-label/component',
+          exportName: 'AutoGenerateLabel',
+          clientProps: {
+            sourcePath: fieldToUse,
+            contentType: 'slug',
+          },
+        },
+      },
     },
     hooks: {
       beforeValidate: [
@@ -80,7 +89,10 @@ export const createSlugField = ({
           const isLocked = siblingData?.slugLock ?? true
 
           if (operation === 'update' && originalDoc?.slug && isLocked) {
-            return originalDoc.slug
+            if (!value || value === originalDoc.slug) {
+              return originalDoc.slug
+            }
+            return value
           }
 
           let source: string
