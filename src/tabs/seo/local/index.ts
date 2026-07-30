@@ -47,6 +47,7 @@ export function createLocalSeoTab(
             },
           },
         },
+        hooks: { afterRead: [createAfterReadHook('description')] },
       },
       {
         name: 'image',
@@ -57,7 +58,6 @@ export function createLocalSeoTab(
         admin: {
           description: "Open Graph image for this page's URL.",
         },
-        hooks: { afterRead: [createAfterReadHook('description')] },
       },
       {
         name: 'canonicalUrl',
