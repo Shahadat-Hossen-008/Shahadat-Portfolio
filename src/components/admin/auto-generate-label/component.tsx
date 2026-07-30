@@ -17,7 +17,7 @@ type props = AutoGenerateLabelProps & FieldLabelClientProps<TextFieldClient>
  * field (`sourcePath`) on the same form into this field, live and client-side.
  */
 export function AutoGenerateLabel(props: props) {
-  const { field, path, sourcePath = 'title', contentType = 'text' } = props
+  const { field, path, sourcePath, contentType = 'text' } = props
   const {
     setValue: setTargetValue,
     readOnly: isTargetReadOnly,
