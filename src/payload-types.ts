@@ -7,6 +7,26 @@
  */
 
 /**
+ * Add a JSON-LD object (e.g. {"@context": "https://schema.org", "@type": "Article", ...}) describing this page to help search engines understand its content.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SchemaMarkup".
+ */
+export type SchemaMarkup =
+  | {
+      jsonLD:
+        | {
+            [k: string]: unknown;
+          }
+        | unknown[]
+        | string
+        | number
+        | boolean
+        | null;
+      id?: string | null;
+    }[]
+  | null;
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -213,6 +233,7 @@ export interface LocalSeoTab {
    * Redirect URL for this page. Please start with https://
    */
   redirect?: string | null;
+  schemaMarkup?: SchemaMarkup;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -369,6 +390,15 @@ export interface LocalSeoTabSelect<T extends boolean = true> {
   image?: T;
   canonicalUrl?: T;
   redirect?: T;
+  schemaMarkup?: T | SchemaMarkupSelect<T>;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SchemaMarkup_select".
+ */
+export interface SchemaMarkupSelect<T extends boolean = true> {
+  jsonLD?: T;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

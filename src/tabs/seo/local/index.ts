@@ -2,6 +2,7 @@ import { Tab, TextField, ValidateOptions } from 'payload'
 import { text } from 'payload/shared'
 import { isValidUrl } from './validate'
 import { createAfterReadHook } from './utils'
+import { createSchemaMarkupField } from '../common/schema-markup'
 
 /**
  * Builds the "SEO" tab for a single document (page, project, blog, etc.).
@@ -107,6 +108,7 @@ export function createLocalSeoTab(
           }
         },
       },
+      createSchemaMarkupField('page'),
     ],
   }
 }
