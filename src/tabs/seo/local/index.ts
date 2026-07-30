@@ -3,7 +3,10 @@ import { text } from 'payload/shared'
 import { isValidUrl } from './validate'
 import { createAfterReadHook } from './utils'
 
-export function createLocalSeoTab(): Tab {
+export function createLocalSeoTab(
+  descriptionSourcePath?: string,
+  titleSourcePathOverride?: string,
+): Tab {
   return {
     name: 'localSeoTab',
     label: 'SEO',
@@ -16,6 +19,15 @@ export function createLocalSeoTab(): Tab {
         admin: {
           description:
             'SEO title for this page. If not provided, it will fall back to a suitable document property (e.g., the page title)',
+          components: {
+            Label: {
+              path: '@/components/admin/auto-generate-label/component',
+              exportName: 'AutoGenerateLabel',
+              clientProps: {
+                sourcePath: titleSourcePathOverride ?? 'title',
+              },
+            },
+          },
         },
         hooks: { afterRead: [createAfterReadHook('title')] },
       },
@@ -25,6 +37,15 @@ export function createLocalSeoTab(): Tab {
         type: 'textarea',
         admin: {
           description: 'SEO description for this page.',
+          components: {
+            Label: {
+              path: '@/components/admin/auto-generate-label/component',
+              exportName: 'AutoGenerateLabel',
+              clientProps: {
+                sourcePath: descriptionSourcePath ?? 'description',
+              },
+            },
+          },
         },
       },
       {
