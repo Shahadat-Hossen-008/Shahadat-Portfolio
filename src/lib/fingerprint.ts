@@ -1,5 +1,4 @@
 import crypto from 'crypto'
-import { Jimp } from 'jimp'
 
 /**
  * Generates a content-based fingerprint for ANY file type (images, PDFs,
