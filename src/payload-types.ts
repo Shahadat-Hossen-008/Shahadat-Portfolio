@@ -197,6 +197,7 @@ export interface Page {
    */
   title: string;
   localSeoTab: LocalSeoTab;
+  link: Link;
   /**
    * The slug is used in the URL for this page. It's recommended to keep it short and descriptive.
    */
@@ -233,8 +234,8 @@ export interface LocalSeoTab {
    * Redirect URL for this page. Please start with https://
    */
   redirect?: string | null;
-  schemaMarkup?: SchemaMarkup;
   robotsConfig: RobotsConfig;
+  schemaMarkup?: SchemaMarkup;
 }
 /**
  * Configure how search engines interact with this page.
@@ -259,6 +260,19 @@ export interface RobotsConfig {
    * Prevents search engines from displaying a text preview for this page in search results.
    */
   disableSnippet: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Link".
+ */
+export interface Link {
+  label?: string | null;
+  type: 'external' | 'internal';
+  url?: string | null;
+  reference?: {
+    relationTo: 'pages';
+    value: string | Page;
+  } | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -400,6 +414,7 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   localSeoTab?: T | LocalSeoTabSelect<T>;
+  link?: T | LinkSelect<T>;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -415,8 +430,18 @@ export interface LocalSeoTabSelect<T extends boolean = true> {
   image?: T;
   canonicalUrl?: T;
   redirect?: T;
-  schemaMarkup?: T | SchemaMarkupSelect<T>;
   robotsConfig?: T | RobotsConfigSelect<T>;
+  schemaMarkup?: T | SchemaMarkupSelect<T>;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RobotsConfig_select".
+ */
+export interface RobotsConfigSelect<T extends boolean = true> {
+  disableIndex?: T;
+  disableFollow?: T;
+  disableImageIndex?: T;
+  disableSnippet?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -428,13 +453,13 @@ export interface SchemaMarkupSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "RobotsConfig_select".
+ * via the `definition` "Link_select".
  */
-export interface RobotsConfigSelect<T extends boolean = true> {
-  disableIndex?: T;
-  disableFollow?: T;
-  disableImageIndex?: T;
-  disableSnippet?: T;
+export interface LinkSelect<T extends boolean = true> {
+  label?: T;
+  type?: T;
+  url?: T;
+  reference?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
