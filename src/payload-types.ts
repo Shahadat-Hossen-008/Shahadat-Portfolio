@@ -196,7 +196,7 @@ export interface Page {
    * The name of the page
    */
   title: string;
-  localSeoTab?: LocalSeoTab;
+  localSeoTab: LocalSeoTab;
   /**
    * The slug is used in the URL for this page. It's recommended to keep it short and descriptive.
    */
@@ -234,6 +234,31 @@ export interface LocalSeoTab {
    */
   redirect?: string | null;
   schemaMarkup?: SchemaMarkup;
+  robotsConfig: RobotsConfig;
+}
+/**
+ * Configure how search engines interact with this page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RobotsConfig".
+ */
+export interface RobotsConfig {
+  /**
+   * Prevents search engines from showing this page in search results. Use for thank-you pages, duplicate content, or drafts you don't want people to find.
+   */
+  disableIndex: boolean;
+  /**
+   * Prevents search engines from following links on this page. Rarely needed — use for pages that link to untrusted or sponsored content.
+   */
+  disableFollow: boolean;
+  /**
+   * Keeps images on this page out of Google Images and similar image search results.
+   */
+  disableImageIndex: boolean;
+  /**
+   * Prevents search engines from displaying a text preview for this page in search results.
+   */
+  disableSnippet: boolean;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -391,6 +416,7 @@ export interface LocalSeoTabSelect<T extends boolean = true> {
   canonicalUrl?: T;
   redirect?: T;
   schemaMarkup?: T | SchemaMarkupSelect<T>;
+  robotsConfig?: T | RobotsConfigSelect<T>;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -399,6 +425,16 @@ export interface LocalSeoTabSelect<T extends boolean = true> {
 export interface SchemaMarkupSelect<T extends boolean = true> {
   jsonLD?: T;
   id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RobotsConfig_select".
+ */
+export interface RobotsConfigSelect<T extends boolean = true> {
+  disableIndex?: T;
+  disableFollow?: T;
+  disableImageIndex?: T;
+  disableSnippet?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
