@@ -10,6 +10,8 @@ import { Media } from './collections/media'
 import { Pages } from './collections/Pages'
 import { Tags } from './collections/Tags'
 import { customLexicalEditor } from './lib/lexicalEditor'
+import { Layout } from './globals/layout'
+import { SiteConfig } from './globals/site-config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -22,6 +24,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Pages, Tags],
+  globals: [SiteConfig, Layout],
   editor: customLexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
