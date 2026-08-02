@@ -111,8 +111,14 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    siteConfig: SiteConfig;
+    layout: Layout;
+  };
+  globalsSelect: {
+    siteConfig: SiteConfigSelect<false> | SiteConfigSelect<true>;
+    layout: LayoutSelect<false> | LayoutSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -196,8 +202,10 @@ export interface Page {
    * The name of the page
    */
   title: string;
+  linkTab: {
+    link: Link;
+  };
   localSeoTab: LocalSeoTab;
-  link: Link;
   /**
    * The slug is used in the URL for this page. It's recommended to keep it short and descriptive.
    */
@@ -208,6 +216,19 @@ export interface Page {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Link".
+ */
+export interface Link {
+  label?: string | null;
+  type: 'external' | 'internal';
+  url?: string | null;
+  reference?: {
+    relationTo: 'pages';
+    value: string | Page;
+  } | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -260,19 +281,6 @@ export interface RobotsConfig {
    * Prevents search engines from displaying a text preview for this page in search results.
    */
   disableSnippet: boolean;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Link".
- */
-export interface Link {
-  label?: string | null;
-  type: 'external' | 'internal';
-  url?: string | null;
-  reference?: {
-    relationTo: 'pages';
-    value: string | Page;
-  } | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -413,12 +421,26 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  linkTab?:
+    | T
+    | {
+        link?: T | LinkSelect<T>;
+      };
   localSeoTab?: T | LocalSeoTabSelect<T>;
-  link?: T | LinkSelect<T>;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Link_select".
+ */
+export interface LinkSelect<T extends boolean = true> {
+  label?: T;
+  type?: T;
+  url?: T;
+  reference?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -450,16 +472,6 @@ export interface RobotsConfigSelect<T extends boolean = true> {
 export interface SchemaMarkupSelect<T extends boolean = true> {
   jsonLD?: T;
   id?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Link_select".
- */
-export interface LinkSelect<T extends boolean = true> {
-  label?: T;
-  type?: T;
-  url?: T;
-  reference?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -509,6 +521,134 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "siteConfig".
+ */
+export interface SiteConfig {
+  id: string;
+  globalSeoTab: GlobalSeoTab;
+  tracking?: {
+    /**
+     * The Google Tag Manager ID for the site. This is used to load the GTM script on every page.
+     */
+    googleTagManagerID?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GlobalSeoTab".
+ */
+export interface GlobalSeoTab {
+  /**
+   * Default Open Graph image for the site.
+   */
+  image?: (string | null) | Media;
+  robotsConfig: RobotsConfig;
+  schemaMarkup?: SchemaMarkup;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "layout".
+ */
+export interface Layout {
+  id: string;
+  header?: IPayloadHeader;
+  footer?: IPayloadFooter;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IPayloadHeader".
+ */
+export interface IPayloadHeader {
+  title?: string | null;
+  links?:
+    | {
+        link: Link;
+        id?: string | null;
+      }[]
+    | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IPayloadFooter".
+ */
+export interface IPayloadFooter {
+  copyright?: string | null;
+  links?:
+    | {
+        link: Link;
+        id?: string | null;
+      }[]
+    | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "siteConfig_select".
+ */
+export interface SiteConfigSelect<T extends boolean = true> {
+  globalSeoTab?: T | GlobalSeoTabSelect<T>;
+  tracking?:
+    | T
+    | {
+        googleTagManagerID?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GlobalSeoTab_select".
+ */
+export interface GlobalSeoTabSelect<T extends boolean = true> {
+  image?: T;
+  robotsConfig?: T | RobotsConfigSelect<T>;
+  schemaMarkup?: T | SchemaMarkupSelect<T>;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "layout_select".
+ */
+export interface LayoutSelect<T extends boolean = true> {
+  header?: T | IPayloadHeaderSelect<T>;
+  footer?: T | IPayloadFooterSelect<T>;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IPayloadHeader_select".
+ */
+export interface IPayloadHeaderSelect<T extends boolean = true> {
+  title?: T;
+  links?:
+    | T
+    | {
+        link?: T | LinkSelect<T>;
+        id?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IPayloadFooter_select".
+ */
+export interface IPayloadFooterSelect<T extends boolean = true> {
+  copyright?: T;
+  links?:
+    | T
+    | {
+        link?: T | LinkSelect<T>;
+        id?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
