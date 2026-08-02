@@ -32,10 +32,9 @@ export function createAfterReadHook(field: 'title' | 'description'): FieldHook {
     }
 
     const slug = collection?.slug
-    if (slug === 'pages') {
-      return getSeoFallback(slug, data, field)
+    if (!slug) {
+      return value ?? ''
     }
-
-    return value ?? ''
+    return getSeoFallback(slug, data, field)
   }
 }
