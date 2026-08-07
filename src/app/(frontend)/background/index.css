@@ -1,0 +1,90 @@
+/* ============================================
+   background.css
+   Append this into app/globals.css (below your
+   Tailwind @tailwind directives / @import "tailwindcss";)
+   ============================================ */
+
+:root {
+  --void: #070B09;
+  --surface: #0D1712;
+  --surface-border: rgba(143, 227, 176, 0.15);
+  --grid-line: rgba(120, 255, 170, 0.07);
+  --phosphor: #8FE3B0;
+  --phosphor-bright: #3DFF9A;
+  --amber: #FFB86B;
+  --muted: #6B8577;
+}
+
+.bg-void {
+  background: var(--void);
+}
+
+/* wrapper that holds all layers, pinned to fill its relative parent */
+.bg-layers {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* layout-level instance: pinned to the viewport, sits behind every page,
+   scrolls with nothing above it — this is what keeps the grid seamless */
+.bg-layers-fixed {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+/* Layer 1 — radial glow, breathing slowly, sits behind everything */
+.bg-glow {
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 500px;
+  max-width: 160vw;
+  background: radial-gradient(    circle,    rgba(61, 255, 154, 0.16) 0%,    rgba(61, 255, 154, 0.05) 40%,    transparent 70%  );
+  /* animation: breathe 6s ease-in-out infinite; */
+
+}
+
+/* @keyframes breathe {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+  50%      { opacity: 1;   transform: translateX(-50%) scale(1.06); }
+} */
+
+/* Layer 2 — graph-paper grid, faded toward the edges via mask */
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 40%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 40%, transparent 90%);
+}
+
+/* Layer 3 — scanline texture. Use only on the hero. */
+.bg-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.35;
+}
+
+/* Respect reduced-motion preference: freeze the glow, keep it visible but static */
+@media (prefers-reduced-motion: reduce) {
+  .bg-glow {
+    animation: none;
+    opacity: 0.85;
+  }
+}
