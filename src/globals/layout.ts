@@ -21,7 +21,24 @@ export const Layout: GlobalConfig = {
           label: 'Header',
           interfaceName: 'IPayloadHeader',
           fields: [
-            { name: 'title', type: 'text' },
+            {
+              name: 'logo',
+              label: 'Logo',
+              type: 'upload',
+              relationTo: 'media',
+              filterOptions: { mimeType: { contains: 'image/' } },
+              admin: {
+                description: 'If set, displayed instead of the site title text in the header.',
+              },
+            },
+            {
+              name: 'title',
+              type: 'text',
+              label: 'Site Title',
+              admin: {
+                description: 'Used as a text fallback when no logo is uploaded.',
+              },
+            },
             {
               name: 'links',
               type: 'array',
