@@ -7,6 +7,26 @@
  */
 
 /**
+ * Add a JSON-LD object (e.g. {"@context": "https://schema.org", "@type": "Article", ...}) describing this page to help search engines understand its content.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SchemaMarkup".
+ */
+export type SchemaMarkup =
+  | {
+      jsonLD:
+        | {
+            [k: string]: unknown;
+          }
+        | unknown[]
+        | string
+        | number
+        | boolean
+        | null;
+      id?: string | null;
+    }[]
+  | null;
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -69,6 +89,8 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    pages: Page;
+    tags: Tag;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +100,8 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +111,14 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    siteConfig: SiteConfig;
+    layout: Layout;
+  };
+  globalsSelect: {
+    siteConfig: SiteConfigSelect<false> | SiteConfigSelect<true>;
+    layout: LayoutSelect<false> | LayoutSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -149,6 +179,7 @@ export interface User {
 export interface Media {
   id: string;
   alt: string;
+  hash: string;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -160,6 +191,106 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: string;
+  /**
+   * The name of the page
+   */
+  title: string;
+  linkTab: {
+    link: Link;
+  };
+  localSeoTab: LocalSeoTab;
+  /**
+   * The slug is used in the URL for this page. It's recommended to keep it short and descriptive.
+   */
+  slug?: string | null;
+  /**
+   * Auto-generate slug from title. Uncheck to edit manually.
+   */
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Link".
+ */
+export interface Link {
+  label?: string | null;
+  type: 'external' | 'internal';
+  url?: string | null;
+  reference?: {
+    relationTo: 'pages';
+    value: string | Page;
+  } | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LocalSeoTab".
+ */
+export interface LocalSeoTab {
+  /**
+   * SEO title for this page. If not provided, it will fall back to a suitable document property (e.g., the page title)
+   */
+  title?: string | null;
+  /**
+   * SEO description for this page.
+   */
+  description?: string | null;
+  /**
+   * Open Graph image for this page's URL.
+   */
+  image?: (string | null) | Media;
+  /**
+   * If not provided it will be a self-referencing URL.
+   */
+  canonicalUrl?: string | null;
+  /**
+   * Redirect URL for this page. Please start with https://
+   */
+  redirect?: string | null;
+  robotsConfig: RobotsConfig;
+  schemaMarkup?: SchemaMarkup;
+}
+/**
+ * Configure how search engines interact with this page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RobotsConfig".
+ */
+export interface RobotsConfig {
+  /**
+   * Prevents search engines from showing this page in search results. Use for thank-you pages, duplicate content, or drafts you don't want people to find.
+   */
+  disableIndex: boolean;
+  /**
+   * Prevents search engines from following links on this page. Rarely needed — use for pages that link to untrusted or sponsored content.
+   */
+  disableFollow: boolean;
+  /**
+   * Keeps images on this page out of Google Images and similar image search results.
+   */
+  disableImageIndex: boolean;
+  /**
+   * Prevents search engines from displaying a text preview for this page in search results.
+   */
+  disableSnippet: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: string;
+  label: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -192,6 +323,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: string | Tag;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -263,6 +402,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  hash?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -274,6 +414,73 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  linkTab?:
+    | T
+    | {
+        link?: T | LinkSelect<T>;
+      };
+  localSeoTab?: T | LocalSeoTabSelect<T>;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Link_select".
+ */
+export interface LinkSelect<T extends boolean = true> {
+  label?: T;
+  type?: T;
+  url?: T;
+  reference?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LocalSeoTab_select".
+ */
+export interface LocalSeoTabSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  canonicalUrl?: T;
+  redirect?: T;
+  robotsConfig?: T | RobotsConfigSelect<T>;
+  schemaMarkup?: T | SchemaMarkupSelect<T>;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RobotsConfig_select".
+ */
+export interface RobotsConfigSelect<T extends boolean = true> {
+  disableIndex?: T;
+  disableFollow?: T;
+  disableImageIndex?: T;
+  disableSnippet?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SchemaMarkup_select".
+ */
+export interface SchemaMarkupSelect<T extends boolean = true> {
+  jsonLD?: T;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  label?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,6 +521,134 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "siteConfig".
+ */
+export interface SiteConfig {
+  id: string;
+  globalSeoTab: GlobalSeoTab;
+  tracking?: {
+    /**
+     * The Google Tag Manager ID for the site. This is used to load the GTM script on every page.
+     */
+    googleTagManagerID?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GlobalSeoTab".
+ */
+export interface GlobalSeoTab {
+  /**
+   * Default Open Graph image for the site.
+   */
+  image?: (string | null) | Media;
+  robotsConfig: RobotsConfig;
+  schemaMarkup?: SchemaMarkup;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "layout".
+ */
+export interface Layout {
+  id: string;
+  header?: IPayloadHeader;
+  footer?: IPayloadFooter;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IPayloadHeader".
+ */
+export interface IPayloadHeader {
+  title?: string | null;
+  links?:
+    | {
+        link: Link;
+        id?: string | null;
+      }[]
+    | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IPayloadFooter".
+ */
+export interface IPayloadFooter {
+  copyright?: string | null;
+  links?:
+    | {
+        link: Link;
+        id?: string | null;
+      }[]
+    | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "siteConfig_select".
+ */
+export interface SiteConfigSelect<T extends boolean = true> {
+  globalSeoTab?: T | GlobalSeoTabSelect<T>;
+  tracking?:
+    | T
+    | {
+        googleTagManagerID?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GlobalSeoTab_select".
+ */
+export interface GlobalSeoTabSelect<T extends boolean = true> {
+  image?: T;
+  robotsConfig?: T | RobotsConfigSelect<T>;
+  schemaMarkup?: T | SchemaMarkupSelect<T>;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "layout_select".
+ */
+export interface LayoutSelect<T extends boolean = true> {
+  header?: T | IPayloadHeaderSelect<T>;
+  footer?: T | IPayloadFooterSelect<T>;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IPayloadHeader_select".
+ */
+export interface IPayloadHeaderSelect<T extends boolean = true> {
+  title?: T;
+  links?:
+    | T
+    | {
+        link?: T | LinkSelect<T>;
+        id?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IPayloadFooter_select".
+ */
+export interface IPayloadFooterSelect<T extends boolean = true> {
+  copyright?: T;
+  links?:
+    | T
+    | {
+        link?: T | LinkSelect<T>;
+        id?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
